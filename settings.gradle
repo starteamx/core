@@ -16,3 +16,4 @@ rootProject.name = "StarteamCoreLibrary"
 include ':app'
 include ':lib-appcontext'
 include ':lib-gson'
+include ':lib-encrypt'
