@@ -2,7 +2,7 @@ package com.starteam.core.lib.utils;
 
 import android.annotation.SuppressLint;
 
-import com.starteam.core.utils.constants.TimeConstants;
+import com.starteam.core.lib.utils.constants.TimeConstants;
 
 import java.text.DateFormat;
 import java.text.ParseException;
