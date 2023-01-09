@@ -36,3 +36,5 @@ dependencies {
 
     implementation 'com.github.starteamx.core:lib-appcontext:1.0.0'
 }
+
+apply from: rootProject.file("gradle/maven-publish.gradle")
