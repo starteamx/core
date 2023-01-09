@@ -4,6 +4,13 @@ apply plugin: "maven-publish"
  * https://docs.gradle.org/current/dsl/org.gradle.api.publish.maven.MavenPublication.html#org.gradle.api.publish.maven.MavenPublication:artifact(java.lang.Object)
  * https://docs.gradle.org/current/userguide/publishing_setup.html
  * */
+
+android {
+    publishing {
+        singleVariant("release")
+    }
+}
+
 afterEvaluate { project ->
     if (plugins.hasPlugin('com.android.application') || plugins.hasPlugin('com.android.library')) {
         /** Android doc*/
@@ -49,7 +56,7 @@ afterEvaluate { project ->
     /** publish library with doc and source code */
     publishing {
         publications {
-            maven(MavenPublication) {
+            release(MavenPublication) {
                 groupId = GROUP_ID
                 artifactId = ARTIFACT_ID
                 version = VERSION
