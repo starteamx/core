@@ -2,7 +2,7 @@ package com.starteam.core.lib.utils;
 
 import android.content.Context;
 
-import com.starteam.core.appcontext.AppContextUtils;
+import com.starteam.core.lib.appcontext.AppContextUtils;
 
 /**
  * author : guanrunbai

@@ -15,7 +15,7 @@ import android.view.Surface;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.starteam.core.appcontext.AppContextUtils;
+import com.starteam.core.lib.appcontext.AppContextUtils;
 
 import java.lang.reflect.Method;
 

@@ -10,7 +10,7 @@ import android.provider.Settings;
 
 import androidx.annotation.RequiresApi;
 
-import com.starteam.core.appcontext.AppContextUtils;
+import com.starteam.core.lib.appcontext.AppContextUtils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

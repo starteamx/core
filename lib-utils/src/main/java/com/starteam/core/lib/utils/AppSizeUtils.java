@@ -6,7 +6,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.starteam.core.appcontext.AppContextUtils;
+import com.starteam.core.lib.appcontext.AppContextUtils;
 
 /**
  * author : guanrunbai
