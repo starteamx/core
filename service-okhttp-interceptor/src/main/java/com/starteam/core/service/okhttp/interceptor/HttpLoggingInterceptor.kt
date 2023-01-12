@@ -3,6 +3,7 @@ package com.starteam.core.service.okhttp.interceptor
 import android.os.Build
 import com.yc.netinterceptor.isProbablyUtf8
 import okhttp3.*
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.internal.http.promisesBody
 import okio.Buffer
 import okio.GzipSource
@@ -171,7 +172,7 @@ class HttpLoggingInterceptor @JvmOverloads constructor(
                 val resp = responseBody.string()
                 stringBuffer.append(resp)
                 logger.log(stringBuffer.toString())
-                return response.newBuilder().body(ResponseBody.create(mediaType, resp)).build()
+                return response.newBuilder().body(resp.toResponseBody(mediaType)).build()
             }
         }
         logger.log(stringBuffer.toString())
@@ -189,7 +190,7 @@ class HttpLoggingInterceptor @JvmOverloads constructor(
             } else {
                 val source = responseBody.source()
                 source.request(Long.MAX_VALUE) // Buffer the entire body.
-                var buffer = source.buffer()
+                var buffer = source.buffer
 
                 var gzippedLength: Long? = null
                 if ("gzip".equals(headers["Content-Encoding"], ignoreCase = true)) {
