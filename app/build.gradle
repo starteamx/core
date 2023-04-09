@@ -1,7 +1,10 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
+
+
 
 android {
     namespace 'com.starteam.core'
@@ -9,12 +12,19 @@ android {
 
     defaultConfig {
         applicationId "com.starteam.core"
-        minSdk 16
+        minSdk 21
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            //abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            abiFilters 'armeabi-v7a'
+        }
     }
 
     buildTypes {
@@ -33,13 +43,85 @@ android {
 }
 
 dependencies {
-
-    implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation project(path: ':lib-store')
+    implementation project(path: ':lib-aspect')
+    implementation project(path: ':lib-epic')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    implementation 'com.github.starteamx.core:lib-appcontext:1.0.0'
+    api 'org.aspectj:aspectjrt:1.9.5'
+
+}
+
+
+import org.aspectj.bridge.IMessage
+import org.aspectj.bridge.MessageHandler
+import org.aspectj.tools.ajc.Main
+
+final def log = project.logger
+final def variants = project.android.applicationVariants
+
+variants.all { variant ->
+    // 注意这里控制debug下生效，可以自行控制是否生效
+    if (!variant.buildType.isDebuggable()) {
+        log.debug("Skipping non-debuggable build type '${variant.buildType.name}'.")
+        return
+    }
+
+
+    JavaCompile javaCompile = variant.javaCompileProvider.get()
+    javaCompile.doLast {
+        String[] args = ["-showWeaveInfo",
+                         "-1.8", // java1.8
+                         "-inpath", javaCompile.destinationDir.toString(), //需要处理的class文件目录
+                         "-aspectpath", javaCompile.classpath.asPath,
+                         "-d", javaCompile.destinationDir.toString(),
+                         "-classpath", javaCompile.classpath.asPath,
+                         "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
+
+        log.debug "ajc args: " + Arrays.toString(args)
+
+        def buildType = variant.buildType.name
+
+
+        String[] kotlinArgs = ["-showWeaveInfo",
+                               "-1.8",
+                               "-inpath", project.buildDir.path + "/tmp/kotlin-classes/" + buildType,
+                               "-aspectpath", javaCompile.classpath.asPath,
+                               "-d", project.buildDir.path + "/tmp/kotlin-classes/" + buildType,
+                               "-classpath", javaCompile.classpath.asPath,
+                               "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
+
+        MessageHandler handler = new MessageHandler(true)
+
+        println("AS-java inpath ${javaCompile.destinationDir.toString()}")
+        println("AS-java aspectpath ${javaCompile.classpath.asPath}")
+        new Main().run(args, handler)
+
+        println("AS-kotlin inpath${project.buildDir.path}")
+        println("AS-kotlin aspectpath${javaCompile.classpath.asPath}")
+        new Main().run(kotlinArgs, handler)
+
+        for (IMessage message : handler.getMessages(null, true)) {
+            switch (message.getKind()) {
+                case IMessage.ABORT:
+                case IMessage.ERROR:
+                case IMessage.FAIL:
+                    log.error message.message, message.thrown
+                    break
+                case IMessage.WARNING:
+                    log.warn message.message, message.thrown
+                    break
+                case IMessage.INFO:
+                    log.info message.message, message.thrown
+                    break
+                case IMessage.DEBUG:
+                    log.debug message.message, message.thrown
+                    break
+            }
+        }
+    }
 }

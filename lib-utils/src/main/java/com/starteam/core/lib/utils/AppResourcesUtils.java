@@ -18,7 +18,7 @@ public final class AppResourcesUtils {
      * @param id      资源id
      * @return
      */
-    public String getString(int id) {
+    public static String getString(int id) {
         Context context = AppContextUtils.getApp();
         return context == null ? "" : context.getResources().getString(id);
     }
@@ -30,7 +30,7 @@ public final class AppResourcesUtils {
      * @param id      资源id
      * @return
      */
-    private String getString(Context context, int id) {
+    private static String getString(Context context, int id) {
         return context.getResources().getString(id);
     }
 }

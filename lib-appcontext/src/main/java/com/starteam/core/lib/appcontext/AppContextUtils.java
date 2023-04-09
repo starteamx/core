@@ -18,20 +18,15 @@ public final class AppContextUtils {
 
     private static Application sApplication;
 
-    public static void init(Application app) {
-        if (app == null) {
-            throw new NullPointerException("Argument 'app' of type Application (#0 out of 1, zero-based) is marked by @android.support.annotation.NonNull but got null for it");
-        } else {
-            sApplication = app;
-        }
-    }
-
     public static Application getApp() {
-        if (sApplication != null) {
-            return sApplication;
-        } else {
-            throw new NullPointerException("u should init first");
+        try {
+            if (sApplication == null) {
+                sApplication = (Application) Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null);
+            }
+        } catch (Exception e) {
+            throw new NullPointerException("sApplication is null");
         }
+        return sApplication;
     }
 
 

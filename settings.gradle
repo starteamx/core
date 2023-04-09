@@ -2,8 +2,24 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
+
         mavenCentral()
+
         maven { url 'https://jitpack.io' }
+
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+
+        maven {
+            url 'https://artifact.bytedance.com/repository/byteX/'
+        }
+    }
+
+    plugins {
+        id 'com.android.application' version '7.3.1' apply false
+        id 'com.android.library' version '7.3.1' apply false
+        id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
     }
 }
 dependencyResolutionManagement {
@@ -11,7 +27,16 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
         maven { url 'https://jitpack.io' }
+
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+
+        maven {
+            url 'https://artifact.bytedance.com/repository/byteX/'
+        }
     }
 }
 rootProject.name = "StarteamCoreLibrary"
@@ -28,9 +53,27 @@ include ':lib-utils'
 include ':lib-zipfile'
 include ':service-image-glide'
 include ':service-okhttp-interceptor'
-include ':lib-log-timber'
 include ':widget-dialog'
-include ':lib-log'
 include ':widget-toast'
 include ':service-easyhttp'
 include ':widget-stateview'
+include ':widget-fragment'
+include ':widget-vpadapter'
+include ':lib-com.starteam.core.service.easyhttps'
+include ':widget-reddotview'
+include ':widget-statusbar'
+include ':lib-count-timer'
+include ':widget-circleimageview'
+include ':service-mtqq-android'
+include ':service-netty-im'
+include ':widget-webview'
+include ':lib-service-hermes'
+include ':lib-logs'
+include ':lib-event-tracker'
+include ':lib-crash'
+include ':lib-aspect'
+include ':lib-epic'
+include ':lib-time-monitor'
+include ':lib-blockcanary-analyzer'
+include ':lib-blockcanary-android'
+include ':lib-blockcanary-android-no-op'

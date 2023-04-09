@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+
+    <application>
+        <receiver android:name="com.starteam.core.widget.webview.broadcast.WebViewInitBoastcast"
+            android:process=":web"/>
+        <service android:name="com.starteam.core.widget.webview.example.main.service.BridgeCommandService"/>
+        <activity
+            android:name="com.starteam.core.widget.webview.example.webview.WebActivity"
+            android:exported="false"
+            android:process=":web"/>
+    </application>
+</manifest>

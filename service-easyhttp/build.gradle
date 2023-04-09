@@ -42,4 +42,4 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime:2.5.1'
 }
 
-apply from: rootProject.file("gradle/maven-publish.gradle")
+//apply from: rootProject.file("gradle/maven-publish.gradle")

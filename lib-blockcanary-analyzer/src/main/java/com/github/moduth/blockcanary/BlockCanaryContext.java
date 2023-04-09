@@ -208,4 +208,14 @@ public class BlockCanaryContext implements BlockInterceptor {
     public boolean stopWhenDebugging() {
         return true;
     }
+
+
+    /**
+     * Default method will collect several messages when detect block what we not need
+     *
+     * @return true if you only need one message, false otherwise
+     */
+    public boolean reportRecentOneMessage() {
+        return false;
+    }
 }

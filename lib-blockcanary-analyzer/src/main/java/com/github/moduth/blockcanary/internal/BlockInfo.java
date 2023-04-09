@@ -19,7 +19,9 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.os.Build;
 import android.os.Build.VERSION;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.github.moduth.blockcanary.BlockCanaryInternals;
@@ -62,6 +64,7 @@ public class BlockInfo {
     public static final String KEY_NETWORK = "network";
     public static final String KEY_TOTAL_MEMORY = "totalMemory";
     public static final String KEY_FREE_MEMORY = "freeMemory";
+    public static final String KEY_IS_BACKGROUND = "background";
 
     public static String sQualifier;
     public static String sModel;
@@ -94,6 +97,7 @@ public class BlockInfo {
     public boolean cpuBusy;
     public String cpuRateInfo;
     public ArrayList<String> threadStackEntries = new ArrayList<>();
+    public boolean isBackground;
 
     private StringBuilder basicSb = new StringBuilder();
     private StringBuilder cpuSb = new StringBuilder();
@@ -107,15 +111,22 @@ public class BlockInfo {
         sApiLevel = VERSION.SDK_INT + " " + VERSION.RELEASE;
         sQualifier = BlockCanaryInternals.getContext().provideQualifier();
         try {
-            TelephonyManager telephonyManager = (TelephonyManager) BlockCanaryInternals
-                    .getContext()
-                    .provideContext()
-                    .getSystemService(Context.TELEPHONY_SERVICE);
-            sImei = telephonyManager.getDeviceId();
+            sImei = getIMEI(BlockCanaryInternals.getContext().provideContext());
         } catch (Exception exception) {
             Log.e(TAG, NEW_INSTANCE_METHOD, exception);
             sImei = EMPTY_IMEI;
         }
+    }
+
+    public static String getIMEI(Context context) {
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(context.TELEPHONY_SERVICE);
+        String deviceId = telephonyManager.getDeviceId();
+        //android 10以上已经获取不了imei了 用 android id代替
+        if (TextUtils.isEmpty(deviceId)) {
+            deviceId = Settings.System.getString(
+                    context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return deviceId;
     }
 
     public BlockInfo() {
@@ -171,6 +182,11 @@ public class BlockInfo {
         return this;
     }
 
+    public BlockInfo setAppBackground(boolean background) {
+        isBackground = background;
+        return this;
+    }
+
     public BlockInfo flushString() {
         String separator = SEPARATOR;
         basicSb.append(KEY_QUA).append(KV).append(qualifier).append(separator);
@@ -185,6 +201,7 @@ public class BlockInfo {
         basicSb.append(KEY_PROCESS).append(KV).append(processName).append(separator);
         basicSb.append(KEY_FREE_MEMORY).append(KV).append(freeMemory).append(separator);
         basicSb.append(KEY_TOTAL_MEMORY).append(KV).append(totalMemory).append(separator);
+        basicSb.append(KEY_IS_BACKGROUND).append(KV).append(isBackground).append(separator);
 
         timeSb.append(KEY_TIME_COST).append(KV).append(timeCost).append(separator);
         timeSb.append(KEY_THREAD_TIME_COST).append(KV).append(threadTimeCost).append(separator);
@@ -193,6 +210,7 @@ public class BlockInfo {
 
         cpuSb.append(KEY_CPU_BUSY).append(KV).append(cpuBusy).append(separator);
         cpuSb.append(KEY_CPU_RATE).append(KV).append(cpuRateInfo).append(separator);
+
 
         if (threadStackEntries != null && !threadStackEntries.isEmpty()) {
             StringBuilder temp = new StringBuilder();
@@ -220,4 +238,6 @@ public class BlockInfo {
     public String toString() {
         return String.valueOf(basicSb) + timeSb + cpuSb + stackSb;
     }
+
+
 }
